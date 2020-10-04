@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import redditandroidapp.data.database.PostsDao
 import redditandroidapp.data.database.PostsDatabase
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.database.PostsDatabaseInteractor
 import redditandroidapp.data.network.PostGsonModel
 import redditandroidapp.data.network.PostsResponseGsonModel
@@ -17,13 +17,15 @@ import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import redditandroidapp.data.network.ChildrenPostsDataGsonModel
+import redditandroidapp.data.network.SinglePostDataGsonModel
 
 class PostsDatabaseInteractorTest {
 
     private var postsDatabaseInteractor: PostsDatabaseInteractor? = null
     private var fakePostGsonModel: PostGsonModel? = null
     private var fakePostsResponseGsonModel: PostsResponseGsonModel? = null
-    private var fakePostsDatabaseEntity: PostsDatabaseEntity? = null
+    private var fakePostDatabaseEntity: PostDatabaseEntity? = null
 
     @Mock
     private val postsDatabase: PostsDatabase? = null
@@ -45,22 +47,25 @@ class PostsDatabaseInteractorTest {
 
         // Prepare fake data
         val id = 0
-        val title = "fake/news/title"
-        val description = "fake/news/description"
-        val url = "fake/news/url"
-        val imageUrl = "fake/news/image/url"
-        val publishingDate = "fake/news/publishing/date"
+        val title = "fake/post/title"
+        val url = "fake/post/url"
+        val imageUrl = "fake/post/image/url"
+        val author = "fake/post/author"
 
         // Prepare fake Gson (API) model objects
-        fakePostGsonModel = PostGsonModel(title, description, url, imageUrl, publishingDate)
-        fakePostsResponseGsonModel = PostsResponseGsonModel(listOf(fakePostGsonModel!!))
+        fakePostGsonModel = PostGsonModel(url, title, imageUrl, author)
+        fakePostsResponseGsonModel = PostsResponseGsonModel(
+            ChildrenPostsDataGsonModel(
+                listOf(SinglePostDataGsonModel(fakePostGsonModel!!))
+            )
+        )
 
-        // Prepare fake News Entity (DB object)
-        fakePostsDatabaseEntity = PostsDatabaseEntity(id, title, description, url, imageUrl, publishingDate)
+        // Prepare fake Post Entity (DB object)
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
     }
 
     @Test
-    fun saveNewsByDatabaseInteractor() {
+    fun savePostByDatabaseInteractor() {
 
         // Perform the action
         val resultStatus = postsDatabaseInteractor!!.addNewPost(fakePostGsonModel).value
@@ -70,20 +75,20 @@ class PostsDatabaseInteractorTest {
     }
 
     @Test
-    fun fetchNewsByDatabaseInteractor() {
+    fun fetchPostByDatabaseInteractor() {
 
         // Prepare LiveData structure
-        val newsEntityLiveData = MutableLiveData<PostsDatabaseEntity>()
-        newsEntityLiveData.setValue(fakePostsDatabaseEntity);
+        val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
+        postEntityLiveData.setValue(fakePostDatabaseEntity);
 
         // Set testing conditions
         Mockito.`when`(postsDatabase?.getPostsDao()).thenReturn(postsDao)
-        Mockito.`when`(postsDao?.getSingleSavedPostById(anyInt())).thenReturn(newsEntityLiveData)
+        Mockito.`when`(postsDao?.getSingleSavedPostById(anyInt())).thenReturn(postEntityLiveData)
 
         // Perform the action
-        val storedNews = postsDatabaseInteractor?.getSingleSavedPostById(0)
+        val storedPost = postsDatabaseInteractor?.getSingleSavedPostById(0)
 
         // Check results
-        Assert.assertSame(newsEntityLiveData, storedNews);
+        Assert.assertSame(postEntityLiveData, storedPost);
     }
 }

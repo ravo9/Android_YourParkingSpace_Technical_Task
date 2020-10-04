@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "posts")
-data class PostsDatabaseEntity(
+data class PostDatabaseEntity(
         @PrimaryKey(autoGenerate = true) val id: Int = 0,
         val permalink: String?,
         val title: String?,

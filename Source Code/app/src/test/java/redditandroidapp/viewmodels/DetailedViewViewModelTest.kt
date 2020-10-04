@@ -2,7 +2,7 @@ package redditandroidapp.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.repositories.PostsRepository
 import redditandroidapp.features.detailedview.DetailedViewViewModel
 import org.junit.Assert
@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations
 class DetailedViewViewModelTest {
 
     private var viewModel: DetailedViewViewModel? = null
-    private var fakePostsDatabaseEntity: PostsDatabaseEntity? = null
+    private var fakePostDatabaseEntity: PostDatabaseEntity? = null
 
     @Mock
     private val postsRepository: PostsRepository? = null
@@ -31,38 +31,37 @@ class DetailedViewViewModelTest {
         // Inject Mocks
         MockitoAnnotations.initMocks(this)
 
-        // Initialize the news
+        // Initialize the ViewModel
         viewModel = DetailedViewViewModel(postsRepository!!)
 
         // Prepare fake data
         val id = 0
-        val title = "fake/news/title"
-        val description = "fake/news/description"
-        val url = "fake/news/url"
-        val imageUrl = "fake/news/image/url"
-        val publishingDate = "fake/news/publishing/date"
+        val title = "fake/post/title"
+        val url = "fake/post/url"
+        val imageUrl = "fake/post/image/url"
+        val author = "fake/post/author"
 
-        // Prepare fake News Entity (DB object)
-        fakePostsDatabaseEntity = PostsDatabaseEntity(id, title, description, url, imageUrl, publishingDate)
+        // Prepare fake Database Entity
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
     }
 
     @Test
-    fun fetchSingleNewsByFeedViewModel() {
+    fun fetchSinglePostByDetailedViewViewModel() {
 
         // Prepare LiveData structure
-        val newsEntityLiveData = MutableLiveData<PostsDatabaseEntity>()
-        newsEntityLiveData.setValue(fakePostsDatabaseEntity);
+        val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
+        postEntityLiveData.setValue(fakePostDatabaseEntity);
 
-        // Prepare fake news id
-        val fakeNewsId = 0
+        // Prepare fake post id
+        val fakePostId = 0
 
         // Set testing conditions
-        Mockito.`when`(postsRepository?.getSingleSavedPostById(fakeNewsId)).thenReturn(newsEntityLiveData)
+        Mockito.`when`(postsRepository?.getSingleSavedPostById(fakePostId)).thenReturn(postEntityLiveData)
 
         // Perform the action
-        val storedNews = viewModel?.getSingleSavedPostById(fakeNewsId)
+        val storedPost = viewModel?.getSingleSavedPostById(fakePostId)
 
         // Check results
-        Assert.assertSame(newsEntityLiveData, storedNews);
+        Assert.assertSame(postEntityLiveData, storedPost);
     }
 }

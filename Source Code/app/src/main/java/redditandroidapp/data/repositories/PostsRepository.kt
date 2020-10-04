@@ -3,7 +3,7 @@ package redditandroidapp.data.repositories
 import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import redditandroidapp.data.database.PostsDatabaseInteractor
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.network.PostsNetworkInteractor
 import redditandroidapp.data.network.PostsResponseGsonModel
 import retrofit2.Call
@@ -16,11 +16,11 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
                                           private val databaseInteractor: PostsDatabaseInteractor
 ) {
 
-    fun getSingleSavedPostById(id: Int): LiveData<PostsDatabaseEntity>? {
+    fun getSingleSavedPostById(id: Int): LiveData<PostDatabaseEntity>? {
         return databaseInteractor.getSingleSavedPostById(id)
     }
 
-    fun getAllPosts(backendUpdateRequired: Boolean): LiveData<List<PostsDatabaseEntity>>? {
+    fun getAllPosts(backendUpdateRequired: Boolean): LiveData<List<PostDatabaseEntity>>? {
         if (backendUpdateRequired) {
             updateDataFromBackEnd()
         }

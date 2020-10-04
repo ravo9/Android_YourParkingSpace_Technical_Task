@@ -3,7 +3,7 @@ package redditandroidapp.repositories
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import redditandroidapp.data.database.PostsDatabaseInteractor
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.network.PostsNetworkInteractor
 import redditandroidapp.data.repositories.PostsRepository
 import org.junit.Assert
@@ -18,8 +18,8 @@ import org.mockito.MockitoAnnotations
 class PostsRepositoryTest {
 
     private var postsRepository: PostsRepository? = null
-    private var fakePostsDatabaseEntity: PostsDatabaseEntity? = null
-    private var fakeNewsEntitiesList = ArrayList<PostsDatabaseEntity>()
+    private var fakePostDatabaseEntity: PostDatabaseEntity? = null
+    private var fakePostEntitiesList = ArrayList<PostDatabaseEntity>()
 
     @Mock
     private val postsDatabaseInteractor: PostsDatabaseInteractor? = null
@@ -41,54 +41,53 @@ class PostsRepositoryTest {
 
         // Prepare fake data
         val id = 0
-        val title = "fake/news/title"
-        val description = "fake/news/description"
-        val url = "fake/news/url"
-        val imageUrl = "fake/news/image/url"
-        val publishingDate = "fake/news/publishing/date"
+        val title = "fake/post/title"
+        val url = "fake/post/url"
+        val imageUrl = "fake/post/image/url"
+        val author = "fake/post/author"
 
-        // Prepare fake News Entity (DB object)
-        fakePostsDatabaseEntity = PostsDatabaseEntity(id, title, description, url, imageUrl, publishingDate)
+        // Prepare fake Post Entity (DB object)
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
 
-        // Prepare fake News Entities List
-        fakeNewsEntitiesList.add(fakePostsDatabaseEntity!!)
+        // Prepare fake Posts Entities List
+        fakePostEntitiesList.add(fakePostDatabaseEntity!!)
     }
 
     @Test
-    fun fetchAllNewssByNewsRepository() {
+    fun fetchAllPostsByPostsRepository() {
 
         // Prepare LiveData structure
-        val newsEntityLiveData = MutableLiveData<List<PostsDatabaseEntity>>()
-        newsEntityLiveData.setValue(fakeNewsEntitiesList);
+        val postsEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
+        postsEntityLiveData.setValue(fakePostEntitiesList);
 
         // Set testing conditions
-        Mockito.`when`(postsDatabaseInteractor?.getAllPosts()).thenReturn(newsEntityLiveData)
+        Mockito.`when`(postsDatabaseInteractor?.getAllPosts()).thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedNews = postsRepository?.getAllPosts(false)
+        val storedPosts = postsRepository?.getAllPosts(false)
 
         // Check results
-        Assert.assertSame(newsEntityLiveData, storedNews);
+        Assert.assertSame(postsEntityLiveData, storedPosts);
     }
 
     @Test
-    fun fetchSingleNewsByNewsRepository() {
+    fun fetchSinglePostByPostsRepository() {
 
         // Prepare LiveData structure
-        val newsEntityLiveData = MutableLiveData<PostsDatabaseEntity>()
-        newsEntityLiveData.setValue(fakePostsDatabaseEntity);
+        val postsEntityLiveData = MutableLiveData<PostDatabaseEntity>()
+        postsEntityLiveData.setValue(fakePostDatabaseEntity);
 
-        // Prepare fake news id
-        val fakeNewsId = 0
+        // Prepare fake post id
+        val fakePostId = 0
 
         // Set testing conditions
-        Mockito.`when`(postsDatabaseInteractor?.getSingleSavedPostById(fakeNewsId))
-            .thenReturn(newsEntityLiveData)
+        Mockito.`when`(postsDatabaseInteractor?.getSingleSavedPostById(fakePostId))
+            .thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedNews = postsRepository?.getSingleSavedPostById(fakeNewsId)
+        val storedPost = postsRepository?.getSingleSavedPostById(fakePostId)
 
         // Check results
-        Assert.assertSame(newsEntityLiveData, storedNews);
+        Assert.assertSame(postsEntityLiveData, storedPost);
     }
 }

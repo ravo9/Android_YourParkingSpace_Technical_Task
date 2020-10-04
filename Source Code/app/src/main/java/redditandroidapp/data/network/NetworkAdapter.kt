@@ -8,8 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 // Network Adapter used for ApiClient building
 object NetworkAdapter {
 
-    const private val BASE_URL = "https://www.reddit.com"
-
     fun apiClient(): ApiClient {
         val builder = Builder()
 
@@ -17,7 +15,7 @@ object NetworkAdapter {
         val retrofit = Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
+                .baseUrl(NetworkConstants.BASE_URL)
                 .client(builder.build())
                 .build()
 

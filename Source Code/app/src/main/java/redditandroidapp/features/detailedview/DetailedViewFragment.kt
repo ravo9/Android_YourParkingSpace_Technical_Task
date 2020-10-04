@@ -12,7 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.detailed_view.*
 import redditandroidapp.R
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
+import redditandroidapp.data.network.NetworkConstants
 import redditandroidapp.injection.RedditAndroidApp
 import javax.inject.Inject
 
@@ -54,9 +55,11 @@ class DetailedViewFragment : Fragment() {
     private fun subscribeForPost() {
         val postId = this.arguments?.getInt("postId")
         postId?.let {
-            viewModel.getSingleSavedPostById(it)?.observe(this, Observer<PostsDatabaseEntity> {
-                val postUrl = it.permalink
-                postUrl?.let {
+            viewModel.getSingleSavedPostById(it)?.observe(this, Observer<PostDatabaseEntity> {
+                val baseUrl = NetworkConstants.BASE_URL
+                val specificUrl = it?.permalink
+                specificUrl?.let {
+                    val postUrl = baseUrl + specificUrl
                     setupWebView(postUrl)
                 }
             })

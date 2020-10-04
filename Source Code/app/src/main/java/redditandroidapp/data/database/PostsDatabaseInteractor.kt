@@ -15,7 +15,7 @@ class PostsDatabaseInteractor(private val postsDatabase: PostsDatabase) {
         val savePostLiveData = MutableLiveData<Boolean>()
 
         post?.let {
-            val postEntity = PostsDatabaseEntity(
+            val postEntity = PostDatabaseEntity(
                 permalink = it.permalink,
                 title = it.title,
                 thumbnail = it.thumbnail,
@@ -29,11 +29,11 @@ class PostsDatabaseInteractor(private val postsDatabase: PostsDatabase) {
         return savePostLiveData
     }
 
-    fun getSingleSavedPostById(id: Int): LiveData<PostsDatabaseEntity>? {
+    fun getSingleSavedPostById(id: Int): LiveData<PostDatabaseEntity>? {
         return postsDatabase.getPostsDao().getSingleSavedPostById(id)
     }
 
-    fun getAllPosts(): LiveData<List<PostsDatabaseEntity>>? {
+    fun getAllPosts(): LiveData<List<PostDatabaseEntity>>? {
         return postsDatabase.getPostsDao().getAllSavedPosts()
     }
 

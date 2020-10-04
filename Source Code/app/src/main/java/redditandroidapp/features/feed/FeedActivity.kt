@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.features.detailedview.DetailedViewFragment
 import redditandroidapp.injection.RedditAndroidApp
 import kotlinx.android.synthetic.main.activity_main.*
@@ -64,7 +64,7 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun subscribeForFeedItems() {
-        viewModel.getAllPosts(true)?.observe(this, Observer<List<PostsDatabaseEntity>> {
+        viewModel.getAllPosts(true)?.observe(this, Observer<List<PostDatabaseEntity>> {
 
             if (!it.isNullOrEmpty()) {
                 setViewState(STATE_CONTENT_LOADED)

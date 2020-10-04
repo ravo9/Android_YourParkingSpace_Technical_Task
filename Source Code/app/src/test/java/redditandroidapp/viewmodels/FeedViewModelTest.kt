@@ -2,7 +2,7 @@ package redditandroidapp.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.repositories.PostsRepository
 import redditandroidapp.features.feed.FeedViewModel
 import org.junit.Assert
@@ -18,8 +18,8 @@ import org.mockito.MockitoAnnotations
 class FeedViewModelTest {
 
     private var viewModel: FeedViewModel? = null
-    private var fakePostsDatabaseEntity: PostsDatabaseEntity? = null
-    private var fakeNewsEntitiesList = ArrayList<PostsDatabaseEntity>()
+    private var fakePostDatabaseEntity: PostDatabaseEntity? = null
+    private var fakePostEntitiesList = ArrayList<PostDatabaseEntity>()
 
     @Mock
     private val postsRepository: PostsRepository? = null
@@ -33,38 +33,37 @@ class FeedViewModelTest {
         // Inject Mocks
         MockitoAnnotations.initMocks(this)
 
-        // Initialize the country
+        // Initialize the ViewModel
         viewModel = FeedViewModel(postsRepository!!)
 
         // Prepare fake data
         val id = 0
-        val title = "fake/news/title"
-        val description = "fake/news/description"
-        val url = "fake/news/url"
-        val imageUrl = "fake/news/image/url"
-        val publishingDate = "fake/news/publishing/date"
+        val title = "fake/post/title"
+        val url = "fake/post/url"
+        val imageUrl = "fake/post/image/url"
+        val author = "fake/post/author"
 
-        // Prepare fake News Entity (DB object)
-        fakePostsDatabaseEntity = PostsDatabaseEntity(id, title, description, url, imageUrl, publishingDate)
+        // Prepare fake Database Entity
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
 
-        // Prepare fake News Entities List
-        fakeNewsEntitiesList.add(fakePostsDatabaseEntity!!)
+        // Prepare fake Database Entities List
+        fakePostEntitiesList.add(fakePostDatabaseEntity!!)
     }
 
     @Test
-    fun fetchAllNewsByFeedViewModel() {
+    fun fetchAllPostsByFeedViewModel() {
 
         // Prepare LiveData structure
-        val newsEntityLiveData = MutableLiveData<List<PostsDatabaseEntity>>()
-        newsEntityLiveData.setValue(fakeNewsEntitiesList)
+        val postsEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
+        postsEntityLiveData.setValue(fakePostEntitiesList)
 
         // Set testing conditions
-        Mockito.`when`(postsRepository?.getAllPosts(false)).thenReturn(newsEntityLiveData)
+        Mockito.`when`(postsRepository?.getAllPosts(false)).thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedNews = viewModel?.getAllPosts(false)
+        val storedPosts = viewModel?.getAllPosts(false)
 
         // Check results
-        Assert.assertSame(newsEntityLiveData, storedNews);
+        Assert.assertSame(postsEntityLiveData, storedPosts);
     }
 }

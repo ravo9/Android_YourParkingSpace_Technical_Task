@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.main_feed_list_item.view.*
 import redditandroidapp.R
-import redditandroidapp.data.database.PostsDatabaseEntity
+import redditandroidapp.data.database.PostDatabaseEntity
 
 // Main adapter used for managing items list within the main RecyclerView (main feed listed)
 class PostsListAdapter (val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<ViewHolder>() {
 
-    private var postsList: List<PostsDatabaseEntity> = ArrayList()
+    private var postsList: List<PostDatabaseEntity> = ArrayList()
 
-    fun setPosts(postsList: List<PostsDatabaseEntity>) {
+    fun setPosts(postsList: List<PostDatabaseEntity>) {
         this.postsList = postsList
         notifyDataSetChanged()
     }

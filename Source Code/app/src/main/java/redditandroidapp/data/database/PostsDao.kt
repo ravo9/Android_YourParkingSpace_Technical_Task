@@ -10,13 +10,13 @@ import androidx.room.Query
 interface PostsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertNewPost(postsDatabaseEntity: PostsDatabaseEntity)
+    fun insertNewPost(postDatabaseEntity: PostDatabaseEntity)
 
     @Query("SELECT * FROM posts WHERE id = :id LIMIT 1")
-    fun getSingleSavedPostById(id: Int): LiveData<PostsDatabaseEntity>?
+    fun getSingleSavedPostById(id: Int): LiveData<PostDatabaseEntity>?
 
     @Query("SELECT * FROM posts")
-    fun getAllSavedPosts(): LiveData<List<PostsDatabaseEntity>>?
+    fun getAllSavedPosts(): LiveData<List<PostDatabaseEntity>>?
 
     @Query("DELETE FROM posts")
     fun clearDatabase()

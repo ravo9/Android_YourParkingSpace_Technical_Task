@@ -1,15 +1,17 @@
 package redditandroidapp.interactors
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import redditandroidapp.data.network.ApiClient
-import redditandroidapp.data.network.PostGsonModel
-import redditandroidapp.data.network.PostsNetworkInteractor
-import redditandroidapp.data.network.PostsResponseGsonModel
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestRule
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import redditandroidapp.data.network.*
+import retrofit2.Response
+import retrofit2.mock.Calls
 
 class PostsNetworkInteractorTest {
 
@@ -32,17 +34,34 @@ class PostsNetworkInteractorTest {
         postsNetworkInteractor = PostsNetworkInteractor(apiClient!!)
 
         // Prepare fake data
-        val id = 0
-        val title = "fake/news/title"
-        val description = "fake/news/description"
-        val url = "fake/news/url"
-        val imageUrl = "fake/news/image/url"
-        val publishingDate = "fake/news/publishing/date"
+        val title = "fake/post/title"
+        val url = "fake/post/url"
+        val imageUrl = "fake/post/image/url"
+        val author = "fake/post/author"
 
         // Prepare fake Gson (API) model objects
-        val fakeArticleGsonModel = PostGsonModel(title, description, url, imageUrl, publishingDate)
-        fakePostsResponseGsonModel = PostsResponseGsonModel(listOf(fakeArticleGsonModel!!))
+        val fakePostGsonModel = PostGsonModel(url, title, imageUrl, author)
+        fakePostsResponseGsonModel = PostsResponseGsonModel(
+            ChildrenPostsDataGsonModel(
+                listOf(SinglePostDataGsonModel(fakePostGsonModel!!))
+            )
+        )
     }
 
-    // Tests to be implemented...
+    @Test
+    fun fetchAllPostsByNetworkInteractor() {
+
+        // Prepare API response
+        val getAllPostsResponse = Calls.response(fakePostsResponseGsonModel!!)
+
+        // Set testing conditions
+        Mockito.`when`(apiClient?.getPosts()).thenReturn(getAllPostsResponse)
+
+        // Perform the action
+        val storedPosts = postsNetworkInteractor?.getAllPosts()
+
+        // Check results
+        Assert.assertSame(getAllPostsResponse, storedPosts);
+
+    }
 }
