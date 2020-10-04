@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="newsdemoapp">
+          package="redditandroidapp">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-            android:name="newsdemoapp.injection.NewsListApp"
+            android:name="redditandroidapp.injection.RedditAndroidApp"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -14,7 +14,7 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
 
-        <activity android:name="newsdemoapp.features.feed.FeedActivity">
+        <activity android:name="redditandroidapp.features.feed.FeedActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
