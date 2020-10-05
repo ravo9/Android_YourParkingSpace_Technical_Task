@@ -45,8 +45,8 @@ class FeedActivity : AppCompatActivity() {
         // Fetch feed items from the back-end and load them into the view
         subscribeForFeedItems()
 
-        // Catch and handle potential network issues
-        subscribeForNetworkError()
+        // Catch and handle potential update (e.g. network) issues
+        subscribeForUpdateError()
     }
 
     private fun setupRecyclerView() {
@@ -75,11 +75,10 @@ class FeedActivity : AppCompatActivity() {
         })
     }
 
-    private fun subscribeForNetworkError() {
-        viewModel.getNetworkError()?.observe(this, Observer<Boolean> {
+    private fun subscribeForUpdateError() {
+        viewModel.subscribeForUpdateErrors()?.observe(this, Observer<Boolean> {
 
-            // In case of Network Error...
-            // If no items have been cached
+            // Case of Network Error if no items have been cached
             if (postsListAdapter.itemCount == 0) {
                 setViewState(STATE_LOADING_ERROR)
             }

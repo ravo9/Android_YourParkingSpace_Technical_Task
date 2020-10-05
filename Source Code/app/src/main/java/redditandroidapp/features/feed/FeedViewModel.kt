@@ -14,7 +14,7 @@ class FeedViewModel @Inject constructor(private val postsRepository: PostsReposi
         return postsRepository.getAllPosts(backendUpdateRequired)
     }
 
-    fun getNetworkError(): LiveData<Boolean>? {
-        return postsRepository.getNetworkError()
+    fun subscribeForUpdateErrors(): LiveData<Boolean>? {
+        return postsRepository.subscribeForUpdateErrors()
     }
 }

@@ -27,12 +27,12 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
         return databaseInteractor.getAllPosts()
     }
 
-    fun getNetworkError(): LiveData<Boolean>? {
-        return networkInteractor.getNetworkError()
+    fun subscribeForUpdateErrors(): LiveData<Boolean>? {
+        return networkInteractor.getUpdateError()
     }
 
-    fun setNetworkError(t: Throwable?) {
-        networkInteractor.setNetworkError(t)
+    fun setUpdateError(t: Throwable?) {
+        networkInteractor.setUpdateError(t)
     }
 
     @SuppressLint("CheckResult")
@@ -52,7 +52,7 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>?, t: Throwable?) {
-                setNetworkError(t)
+                setUpdateError(t)
             }
         })
     }

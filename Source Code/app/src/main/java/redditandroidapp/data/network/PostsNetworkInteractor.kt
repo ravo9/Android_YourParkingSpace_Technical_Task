@@ -9,18 +9,18 @@ import javax.inject.Inject
 // Interactor used for communication with the external API
 class PostsNetworkInteractor @Inject constructor(var apiClient: ApiClient) {
 
-    private val networkError: MutableLiveData<Boolean> = MutableLiveData()
+    private val updateError: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getAllPosts(): Call<PostsResponseGsonModel> {
         return apiClient.getPosts()
     }
 
-    fun getNetworkError(): LiveData<Boolean>? {
-        return networkError
+    fun getUpdateError(): LiveData<Boolean>? {
+        return updateError
     }
 
-    fun setNetworkError(t: Throwable?) {
-        networkError.postValue(true)
+    fun setUpdateError(t: Throwable?) {
+        updateError.postValue(true)
         if (t != null) { Log.e("Network Error: ", t.message) }
     }
 }
