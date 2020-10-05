@@ -52,19 +52,15 @@ class FeedActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         main_feed_recyclerview.layoutManager = layoutManager
-        postsListAdapter = PostsListAdapter(this, { postId: Int ->
+        postsListAdapter = PostsListAdapter(this) { postId: Int ->
             displayDetailedView(postId)
-        })
+        }
         main_feed_recyclerview.adapter = postsListAdapter
-
-        main_feed_recyclerview.setHasFixedSize(true);
-        main_feed_recyclerview.setItemViewCacheSize(20);
-        main_feed_recyclerview.setDrawingCacheEnabled(true);
-        main_feed_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        main_feed_recyclerview.setHasFixedSize(true)
     }
 
     private fun subscribeForFeedItems() {
-        viewModel.getAllPosts(true)?.observe(this, Observer<List<PostDatabaseEntity>> {
+        viewModel.subscribeForAllPosts(true)?.observe(this, Observer<List<PostDatabaseEntity>> {
 
             if (!it.isNullOrEmpty()) {
                 setViewState(STATE_CONTENT_LOADED)
@@ -90,8 +86,7 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun refreshPostsSubscription() {
-        viewModel.getAllPosts(true)?.removeObservers(this)
-        subscribeForFeedItems()
+        viewModel.refreshPosts()
     }
 
     private fun displayDetailedView(postId: Int) {

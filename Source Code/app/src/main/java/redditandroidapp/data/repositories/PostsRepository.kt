@@ -27,6 +27,10 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
         return databaseInteractor.getAllPosts()
     }
 
+    fun refreshPostsWithBackend() {
+        updateDataFromBackEnd()
+    }
+
     fun subscribeForUpdateErrors(): LiveData<Boolean>? {
         return networkInteractor.getUpdateError()
     }
@@ -42,12 +46,8 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
 
             override fun onResponse(call: Call<PostsResponseGsonModel>?, response: Response<PostsResponseGsonModel>?) {
 
-                // Clear database not to store outdated items
-                databaseInteractor.clearDatabase()
-
-                // Save freshly fetched items
-                response?.body()?.data?.childrenPosts?.forEach {
-                    databaseInteractor.addNewPost(it.post)
+                response?.body()?.data?.childrenPosts?.let {
+                    databaseInteractor.updatePosts(it)
                 }
             }
 

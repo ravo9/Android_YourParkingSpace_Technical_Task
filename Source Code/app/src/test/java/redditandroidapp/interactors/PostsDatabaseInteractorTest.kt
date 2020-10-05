@@ -65,17 +65,7 @@ class PostsDatabaseInteractorTest {
     }
 
     @Test
-    fun savePostByDatabaseInteractor() {
-
-        // Perform the action
-        val resultStatus = postsDatabaseInteractor!!.addNewPost(fakePostGsonModel).value
-
-        // Check results
-        Assert.assertTrue(resultStatus!!)
-    }
-
-    @Test
-    fun fetchPostByDatabaseInteractor() {
+    fun fetchSinglePostByDatabaseInteractor() {
 
         // Prepare LiveData structure
         val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
@@ -87,6 +77,24 @@ class PostsDatabaseInteractorTest {
 
         // Perform the action
         val storedPost = postsDatabaseInteractor?.getSingleSavedPostById(0)
+
+        // Check results
+        Assert.assertSame(postEntityLiveData, storedPost);
+    }
+
+    @Test
+    fun fetchAllPostsByDatabaseInteractor() {
+
+        // Prepare LiveData structure
+        val postEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
+        postEntityLiveData.setValue(listOf(fakePostDatabaseEntity!!))
+
+        // Set testing conditions
+        Mockito.`when`(postsDatabase?.getPostsDao()).thenReturn(postsDao)
+        Mockito.`when`(postsDao?.getAllSavedPosts()).thenReturn(postEntityLiveData)
+
+        // Perform the action
+        val storedPost = postsDatabaseInteractor?.getAllPosts()
 
         // Check results
         Assert.assertSame(postEntityLiveData, storedPost);

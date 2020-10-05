@@ -10,8 +10,12 @@ import javax.inject.Inject
 class FeedViewModel @Inject constructor(private val postsRepository: PostsRepository)
     : ViewModel(), LifecycleObserver {
 
-    fun getAllPosts(backendUpdateRequired: Boolean): LiveData<List<PostDatabaseEntity>>? {
+    fun subscribeForAllPosts(backendUpdateRequired: Boolean): LiveData<List<PostDatabaseEntity>>? {
         return postsRepository.getAllPosts(backendUpdateRequired)
+    }
+
+    fun refreshPosts() {
+        return postsRepository.refreshPostsWithBackend()
     }
 
     fun subscribeForUpdateErrors(): LiveData<Boolean>? {

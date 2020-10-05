@@ -61,7 +61,7 @@ class FeedViewModelTest {
         Mockito.`when`(postsRepository?.getAllPosts(false)).thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedPosts = viewModel?.getAllPosts(false)
+        val storedPosts = viewModel?.subscribeForAllPosts(false)
 
         // Check results
         Assert.assertSame(postsEntityLiveData, storedPosts);

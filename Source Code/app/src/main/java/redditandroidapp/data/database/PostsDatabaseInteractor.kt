@@ -1,33 +1,13 @@
 package redditandroidapp.data.database
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import redditandroidapp.data.network.PostGsonModel
+import redditandroidapp.data.network.SinglePostDataGsonModel
 
 // Interactor used for communication with the internal database
 class PostsDatabaseInteractor(private val postsDatabase: PostsDatabase) {
-
-    fun addNewPost(post: PostGsonModel?): LiveData<Boolean> {
-
-        val savePostLiveData = MutableLiveData<Boolean>()
-
-        post?.let {
-            val postEntity = PostDatabaseEntity(
-                permalink = it.permalink,
-                title = it.title,
-                thumbnail = it.thumbnail,
-                author = it.author
-            )
-            GlobalScope.launch(Dispatchers.IO) {
-                postsDatabase.getPostsDao().insertNewPost(postEntity)
-            }
-        }
-        savePostLiveData.postValue(true)
-        return savePostLiveData
-    }
 
     fun getSingleSavedPostById(id: Int): LiveData<PostDatabaseEntity>? {
         return postsDatabase.getPostsDao().getSingleSavedPostById(id)
@@ -37,9 +17,23 @@ class PostsDatabaseInteractor(private val postsDatabase: PostsDatabase) {
         return postsDatabase.getPostsDao().getAllSavedPosts()
     }
 
-    fun clearDatabase() {
+    fun updatePosts(posts: List<SinglePostDataGsonModel>) {
         GlobalScope.launch(Dispatchers.IO) {
+
+            // Clear database not to store outdated items
             postsDatabase.getPostsDao().clearDatabase()
+
+            // Save freshly fetched items
+            posts.forEach {
+                val postEntity = PostDatabaseEntity(
+                    permalink = it.post?.permalink,
+                    title = it.post?.title,
+                    thumbnail = it.post?.thumbnail,
+                    author = it.post?.author
+                )
+
+                postsDatabase.getPostsDao().insertNewPost(postEntity)
+            }
         }
     }
 }
