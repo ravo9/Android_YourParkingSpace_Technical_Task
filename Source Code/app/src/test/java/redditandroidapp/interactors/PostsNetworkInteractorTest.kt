@@ -10,7 +10,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import redditandroidapp.data.network.*
-import retrofit2.Response
 import retrofit2.mock.Calls
 
 class PostsNetworkInteractorTest {
@@ -40,7 +39,7 @@ class PostsNetworkInteractorTest {
         val author = "fake/post/author"
 
         // Prepare fake Gson (API) model objects
-        val fakePostGsonModel = PostGsonModel(url, title, imageUrl, author)
+        val fakePostGsonModel = PostGsonModel(url, title, imageUrl, author, null)
         fakePostsResponseGsonModel = PostsResponseGsonModel(
             ChildrenPostsDataGsonModel(
                 listOf(SinglePostDataGsonModel(fakePostGsonModel!!))
@@ -55,10 +54,10 @@ class PostsNetworkInteractorTest {
         val getAllPostsResponse = Calls.response(fakePostsResponseGsonModel!!)
 
         // Set testing conditions
-        Mockito.`when`(apiClient?.getPosts()).thenReturn(getAllPostsResponse)
+        Mockito.`when`(apiClient?.getFreshPosts()).thenReturn(getAllPostsResponse)
 
         // Perform the action
-        val storedPosts = postsNetworkInteractor?.getAllPosts()
+        val storedPosts = postsNetworkInteractor?.getFreshPosts()
 
         // Check results
         Assert.assertSame(getAllPostsResponse, storedPosts);

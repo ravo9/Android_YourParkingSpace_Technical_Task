@@ -44,7 +44,7 @@ class FeedViewModelTest {
         val author = "fake/post/author"
 
         // Prepare fake Database Entity
-        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author, null)
 
         // Prepare fake Database Entities List
         fakePostEntitiesList.add(fakePostDatabaseEntity!!)
@@ -61,7 +61,7 @@ class FeedViewModelTest {
         Mockito.`when`(postsRepository?.getAllPosts(false)).thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedPosts = viewModel?.subscribeForAllPosts(false)
+        val storedPosts = viewModel?.subscribeForPosts(false)
 
         // Check results
         Assert.assertSame(postsEntityLiveData, storedPosts);

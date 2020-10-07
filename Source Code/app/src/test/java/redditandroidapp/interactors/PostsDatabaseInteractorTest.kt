@@ -53,7 +53,7 @@ class PostsDatabaseInteractorTest {
         val author = "fake/post/author"
 
         // Prepare fake Gson (API) model objects
-        fakePostGsonModel = PostGsonModel(url, title, imageUrl, author)
+        fakePostGsonModel = PostGsonModel(url, title, imageUrl, author, null)
         fakePostsResponseGsonModel = PostsResponseGsonModel(
             ChildrenPostsDataGsonModel(
                 listOf(SinglePostDataGsonModel(fakePostGsonModel!!))
@@ -61,7 +61,7 @@ class PostsDatabaseInteractorTest {
         )
 
         // Prepare fake Post Entity (DB object)
-        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author, null)
     }
 
     @Test

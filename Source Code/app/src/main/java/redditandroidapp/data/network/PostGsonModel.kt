@@ -14,5 +14,8 @@ data class PostGsonModel(
     val thumbnail: String?,
 
     @SerializedName("author")
-    val author: String?
+    val author: String?,
+
+    @SerializedName("name")
+    val name: String?
 )

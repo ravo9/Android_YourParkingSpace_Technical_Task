@@ -29,7 +29,26 @@ class PostsDatabaseInteractor(private val postsDatabase: PostsDatabase) {
                     permalink = it.post?.permalink,
                     title = it.post?.title,
                     thumbnail = it.post?.thumbnail,
-                    author = it.post?.author
+                    author = it.post?.author,
+                    name = it.post?.name
+                )
+
+                postsDatabase.getPostsDao().insertNewPost(postEntity)
+            }
+        }
+    }
+
+    fun addNextPageOfPosts(posts: List<SinglePostDataGsonModel>) {
+        GlobalScope.launch(Dispatchers.IO) {
+
+            // Save freshly fetched items
+            posts.forEach {
+                val postEntity = PostDatabaseEntity(
+                    permalink = it.post?.permalink,
+                    title = it.post?.title,
+                    thumbnail = it.post?.thumbnail,
+                    author = it.post?.author,
+                    name = it.post?.name
                 )
 
                 postsDatabase.getPostsDao().insertNewPost(postEntity)

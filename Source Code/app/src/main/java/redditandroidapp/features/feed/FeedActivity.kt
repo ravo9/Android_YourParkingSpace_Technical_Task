@@ -1,21 +1,25 @@
 package redditandroidapp.features.feed
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import redditandroidapp.data.database.PostDatabaseEntity
-import redditandroidapp.features.detailedview.DetailedViewFragment
-import redditandroidapp.injection.RedditAndroidApp
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
+import redditandroidapp.data.database.PostDatabaseEntity
+import redditandroidapp.features.detailedview.DetailedViewFragment
+import redditandroidapp.injection.RedditAndroidApp
 import javax.inject.Inject
+
 
 // Main ('feed') view
 class FeedActivity : AppCompatActivity() {
@@ -24,6 +28,7 @@ class FeedActivity : AppCompatActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: FeedViewModel
     private lateinit var postsListAdapter: PostsListAdapter
+    var isLoadingMoreItems: Boolean = false
 
     private val STATE_LOADING_ERROR = "STATE_LOADING_ERROR"
     private val STATE_CONTENT_LOADED = "STATE_CONTENT_LOADED"
@@ -32,6 +37,7 @@ class FeedActivity : AppCompatActivity() {
         RedditAndroidApp.mainComponent.inject(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,11 +62,29 @@ class FeedActivity : AppCompatActivity() {
             displayDetailedView(postId)
         }
         main_feed_recyclerview.adapter = postsListAdapter
-        main_feed_recyclerview.setHasFixedSize(true)
+        main_feed_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (layoutManager.findLastVisibleItemPosition() + 1 == postsListAdapter.itemCount) {
+                    loadMoreItems()
+                }
+            }
+        })
+    }
+
+    private fun loadMoreItems() {
+        if (!isLoadingMoreItems) {
+            isLoadingMoreItems = true
+            val lastPostId = postsListAdapter.getLastPostId()
+            lastPostId?.let {
+                viewModel.fetchMorePosts(it)
+            }
+        }
     }
 
     private fun subscribeForFeedItems() {
-        viewModel.subscribeForAllPosts(true)?.observe(this, Observer<List<PostDatabaseEntity>> {
+        viewModel.subscribeForPosts(true)?.observe(this, Observer<List<PostDatabaseEntity>> {
 
             if (!it.isNullOrEmpty()) {
                 setViewState(STATE_CONTENT_LOADED)
@@ -68,6 +92,8 @@ class FeedActivity : AppCompatActivity() {
                 // Display fetched items
                 postsListAdapter.setPosts(it)
             }
+
+            isLoadingMoreItems = false
         })
     }
 
@@ -80,8 +106,9 @@ class FeedActivity : AppCompatActivity() {
             }
 
             // Display error message to the user
-            Toast.makeText(this, R.string.network_problem_check_internet_connection,
-                Toast.LENGTH_LONG) .show()
+            Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_LONG).show()
+
+            isLoadingMoreItems = false
         })
     }
 
@@ -90,7 +117,6 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun displayDetailedView(postId: Int) {
-
         val fragment = DetailedViewFragment()
         val bundle = Bundle()
         bundle.putInt("postId", postId)
@@ -134,14 +160,5 @@ class FeedActivity : AppCompatActivity() {
         btn_refresh.setOnClickListener{
             refreshPostsSubscription()
         }
-
-        // Setup sort button
-        btn_sort.setOnClickListener{
-            changeSortingOrder()
-        }
-    }
-
-    private fun changeSortingOrder() {
-        postsListAdapter.changeSortingOrder()
     }
 }

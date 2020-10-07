@@ -47,7 +47,7 @@ class PostsRepositoryTest {
         val author = "fake/post/author"
 
         // Prepare fake Post Entity (DB object)
-        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author, null)
 
         // Prepare fake Posts Entities List
         fakePostEntitiesList.add(fakePostDatabaseEntity!!)

@@ -11,8 +11,12 @@ class PostsNetworkInteractor @Inject constructor(var apiClient: ApiClient) {
 
     private val updateError: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun getAllPosts(): Call<PostsResponseGsonModel> {
-        return apiClient.getPosts()
+    fun getFreshPosts(): Call<PostsResponseGsonModel> {
+        return apiClient.getFreshPosts()
+    }
+
+    fun getNextPageOfPosts(lastPostName: String): Call<PostsResponseGsonModel> {
+        return apiClient.getNextPageOfPosts(lastPostName)
     }
 
     fun getUpdateError(): LiveData<Boolean>? {

@@ -42,7 +42,7 @@ class DetailedViewViewModelTest {
         val author = "fake/post/author"
 
         // Prepare fake Database Entity
-        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author)
+        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author, null)
     }
 
     @Test

@@ -1,6 +1,5 @@
 package redditandroidapp.data.repositories
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import redditandroidapp.data.database.PostsDatabaseInteractor
 import redditandroidapp.data.database.PostDatabaseEntity
@@ -31,6 +30,10 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
         updateDataFromBackEnd()
     }
 
+    fun fetchMorePostsWithBackend(lastPostName: String) {
+        fetchMorePosts(lastPostName)
+    }
+
     fun subscribeForUpdateErrors(): LiveData<Boolean>? {
         return networkInteractor.getUpdateError()
     }
@@ -39,15 +42,31 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
         networkInteractor.setUpdateError(t)
     }
 
-    @SuppressLint("CheckResult")
     private fun updateDataFromBackEnd() {
 
-        networkInteractor.getAllPosts().enqueue(object: Callback<PostsResponseGsonModel> {
+        networkInteractor.getFreshPosts().enqueue(object: Callback<PostsResponseGsonModel> {
 
             override fun onResponse(call: Call<PostsResponseGsonModel>?, response: Response<PostsResponseGsonModel>?) {
 
                 response?.body()?.data?.childrenPosts?.let {
                     databaseInteractor.updatePosts(it)
+                }
+            }
+
+            override fun onFailure(call: Call<PostsResponseGsonModel>?, t: Throwable?) {
+                setUpdateError(t)
+            }
+        })
+    }
+
+    private fun fetchMorePosts(lastPostName: String) {
+
+        networkInteractor.getNextPageOfPosts(lastPostName).enqueue(object: Callback<PostsResponseGsonModel> {
+
+            override fun onResponse(call: Call<PostsResponseGsonModel>?, response: Response<PostsResponseGsonModel>?) {
+
+                response?.body()?.data?.childrenPosts?.let {
+                    databaseInteractor.addNextPageOfPosts(it)
                 }
             }
 

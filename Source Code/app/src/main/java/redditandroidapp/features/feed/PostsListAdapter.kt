@@ -15,14 +15,24 @@ class PostsListAdapter (val context: Context, val clickListener: (Int) -> Unit) 
 
     private var postsList: List<PostDatabaseEntity> = ArrayList()
 
-    fun setPosts(postsList: List<PostDatabaseEntity>) {
-        this.postsList = postsList
+    fun setPosts(newPostsList: List<PostDatabaseEntity>) {
+        if (newPostsList.size > this.postsList.size && this.postsList.isNotEmpty()) {
+            addMorePosts(newPostsList)
+        } else {
+            addFreshPosts(newPostsList)
+        }
+    }
+
+    fun addFreshPosts(newPostsList: List<PostDatabaseEntity>) {
+        this.postsList = newPostsList
         notifyDataSetChanged()
     }
 
-    fun changeSortingOrder() {
-        this.postsList = postsList.reversed()
-        notifyDataSetChanged()
+    fun addMorePosts(newPostsList: List<PostDatabaseEntity>) {
+        val updateStartPoint = postsList.size
+        val updateEndPoint = postsList.size + newPostsList.size - 1
+        this.postsList = newPostsList
+        notifyItemRangeInserted(updateStartPoint, updateEndPoint)
     }
 
     override fun getItemCount(): Int {
@@ -56,6 +66,10 @@ class PostsListAdapter (val context: Context, val clickListener: (Int) -> Unit) 
             val itemId = postsList[position].id
             clickListener(itemId)
         }
+    }
+
+    fun getLastPostId(): String? {
+        return postsList.last().name
     }
 }
 
